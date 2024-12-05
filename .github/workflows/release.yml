@@ -24,7 +24,7 @@ jobs:
       # Step 3: Retrieve the new tag
       - name: Get the new version tag
         id: get_tag
-        uses: anothrNick/github-tag-action@1.70
+        uses: anothrNick/github-tag-action@1.70.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # if you don't want to set write permissions use a PAT token
           WITH_V: true
