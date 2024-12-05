@@ -1,4 +1,5 @@
 {
   "extends": ["config:base"],
-  "schedule": ["before 3am on every day"]
+  "schedule": ["after 10pm and before 5am"],
+  "timezone": "UTC"
 }
