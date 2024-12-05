@@ -1,0 +1,59 @@
+name: Release Workflow
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Java environment
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17' # Adjust to match your project’s Java version
+
+      # Step 3: Retrieve the new tag
+      - name: Get the new version tag
+        id: get_tag
+        uses: anothrNick/github-tag-action@1.70
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # if you don't want to set write permissions use a PAT token
+          WITH_V: true
+      # Output: `steps.get_tag.outputs.new_tag` contains the new tag
+
+      # Step 4: Build the Docker image using Jib
+      - name: Build Docker image with Jib
+        run: mvn clean compile jib:dockerBuild
+
+      # Step 5: Retrieve artifactId from pom.xml
+      - name: Get artifactId from Maven project
+        id: get_artifact
+        run: |
+          artifactId=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
+          echo "artifactId=$artifactId" >> $GITHUB_ENV
+
+      # Step 6: Log in to DockerHub
+      - name: Log in to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # Step 7: Tag the Docker image
+      - name: Tag the Docker image
+        run: |
+          docker tag generaltao725/$artifactId:latest generaltao725/$artifactId:${{ steps.get_tag.outputs.new_tag }}
+
+      # Step 8: Push the Docker image
+      - name: Push Docker image
+        run: |
+          docker push generaltao725/$artifactId:${{ steps.get_tag.outputs.new_tag }}

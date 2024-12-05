@@ -61,6 +61,21 @@
 					</excludes>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>com.google.cloud.tools</groupId>
+				<artifactId>jib-maven-plugin</artifactId>
+				<version>3.4.2</version>
+				<configuration>
+					<to>
+						<image>generaltao725/${project.name}</image>
+						<tags>
+							<tag>
+								${project.version}
+							</tag>
+						</tags>
+					</to>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
