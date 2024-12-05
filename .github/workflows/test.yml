@@ -1,0 +1,26 @@
+name: Build and Test Maven Project
+
+on:
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out the code from the PR branch
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Java environment (specify your Java version)
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17' # Replace with your project's Java version
+
+      # Step 4: Build and test the project
+      - name: Build and Test with Maven
+        run: mvn clean verify
